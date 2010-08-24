@@ -1,0 +1,116 @@
+Spring Simplify Readme
+======================
+
+This file describes the current implementation of Game Duells Spring Simplify project.
+The aim of this project is to provide a solution out of "spring configuration hell"
+in form of a template system based on spring extensible xml (see 
+http://static.springframework.org/spring/docs/2.0.x/reference/extensible-xml.html).
+ 
+A new spring namespace http://localhost/gd-spring is introduced. 
+Every element of this namespace (short: gd-element) is transformed by the use of 
+a similar named template file, and the result is imported into the current 
+spring bean context. The transformation is done by groovy SimpleTemplate.
+
+Besides of the transformation this project contains a lot of default spring configuration
+files and helper classes.
+
+
+Important files and directories
+-------------------------------
+
+src/main/resources/gd-spring.xsd 
+		- Source of GD-Namespace Schema, you will find further
+           documentation of the elements there
+
+src/main/resources/de.gameduell.spring.extension.templates.<element name><-profile>.tmpl
+        - Source of template files, looked up by <element name><-profile>
+          or just <element name> if a profile specific file wasn't found.
+                                                                     
+
+Eclipse Integration
+-------------------
+
+1) In order to get gd namespace resolution work in eclipse:
+
+Window > Preferences > Web and XML > XML Catalog
+
+add
+
+Location:	spring-simplify/target/classes/de/gameduell/spring/extension/gd-spring.xsd
+URI:   		platform:/resource/spring-simplify/target/classes/de/gameduell/spring/extension/gd-spring.xsd
+Key Type:	Schema Location
+Key:		http://localhost/gd-spring/gd-spring.xsd
+
+
+another solution would be to make this file downloadable from a gd uri and use that url as the new namespace
+
+2) Be sure that the maven dependecy to spring-simplify is included in eclipse
+   (project context menu / maven / update dependencies) 
+
+3) In order to run the integration tests from eclipse, you need to
+ 
+   - set the system property -Dde.gameduell.spring.extension.profile=localIntegrationTests
+   
+   - run a local openMQ instance
+     download it from https://mq.dev.java.net/downloads.html
+     start it with 
+     	{INSTALL-PATH}/mq/bin/imqbrokerd -tty
+     
+   - run a local jini class server and lookup service
+     checkout the lus folder from the same repro like this projekt
+     start runClassServer.bat and runServiceStarter.bat or the corresponding calls under linux
+
+
+4) You should turn on Project / Properties / Maven / resolve dependencies from workspace projects
+   Otherwise classes and resources will be taken from mvn build artifacts
+   To archive zero turnaround, classes and resources should be taken as they are in the file system   
+
+5) There may be a problem with the maven eclipse integration: 
+   resources are not found when using "resolve dependencies from workspace projects".
+   See links
+      http://docs.codehaus.org/display/M2ECLIPSE/Project+FAQ#ProjectFAQ-WhyresourcefoldersinJavaprojecthaveexcluded%3D%22%22
+      https://issues.sonatype.org/browse/MNGECLIPSE-864?page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel
+
+   Seems to be a bug. The easiest workaround seems to be:
+   
+   Project / Properties / Java Build Path / Source, remove all "excluded: **"
+   
+   After each "Project / Maven / Update Project Configuration" Maven overrides this settings, so you have to 
+   repeat this procedure after updating project configuration.
+
+
+Writing new gd-elements / templates
+-----------------------------------
+
+A new gd-element must be defined in gd-spring.xsd and a template with the same name 
+like the gd-element must be created in the template package and may be further 
+distinguished by appending the profiles name (see gd-spring.xsd for a list of profiles).
+A template is a groovy SimpleTemplate (see http://groovy.codehaus.org/Groovy+Templates) 
+with three bounded objects:
+
+* "Utils" is a set of utility functions.
+
+* "profilePostfix" is the postfix set by the system property "de.gameduell.spring.extension.profile"
+  or <g:generator profile> inside of the application context with the possible values
+  productive, integrationTests, localIntegrationTests, unitTests.
+  
+* "element" is the current gd-element that should be transformed by the template.
+  Xml attributes and elements can be accessed like groovy properties:
+  
+    node.id               - value of attribute "id"
+    node.processor        - list of child elements "processor"
+    for (x in node) {...} - loop over all child elements of node
+    node                  - calls node.toString() which returns the 
+                            full xml dump of node without any xml declaration   
+
+
+Reason for namespace url http://localhost/gd-spring    
+---------------------------------------------------
+
+Currently there is no official url for it, and if a non accessible gd url 
+is given this might lead to misleading errors like 
+"whitespace not allowed in..." because in this case the gd server returns 
+a simple text or html document that cannot be parsed. 
+Localhost is present in every case, so at least you will get a usefull 
+error explanation that the document wasn't found.
+
