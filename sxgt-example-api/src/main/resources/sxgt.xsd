@@ -1,0 +1,45 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+		xmlns:spring="http://www.springframework.org/schema/beans" 
+		targetNamespace="http://localhost/sxgt"
+		>
+
+	<import namespace="http://www.springframework.org/schema/beans"
+	        schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"/>
+
+    <!-- sxgt:generator profile is a global switch between the following values 
+    
+    		"" 						- used for production (default) 
+    		"integrationTests"		- used for integration tests (mvn test or from eclipse)
+    		     		
+    	IMPORTANT NOTE: This element must be used before any other sxgt namespace elements in any
+    					spring config, because it sets a system property that determines the
+    					generator template to use! 
+
+     -->
+     
+     <element name="generator">
+        <complexType>
+            <attribute name="profile" use="required">
+            	<simpleType>  
+					<restriction base="string">
+						<enumeration value=""/>
+						<enumeration value="unitTests"/>
+					</restriction>            
+            	</simpleType>  
+            </attribute>
+        </complexType>
+    </element>
+	
+	<!--################################################## -->
+	<!-- JMX -->
+	<!--################################################## -->
+
+    <element name="jmx-bean-exporter">
+        <complexType>
+            <sequence>         
+                <element ref="spring:ref" maxOccurs="unbounded" />
+            </sequence>
+        </complexType>
+    </element>
+    
+</schema>

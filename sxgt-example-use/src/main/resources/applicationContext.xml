@@ -1,0 +1,17 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:gd="http://localhost/sxgt"
+	xsi:schemaLocation="
+    		http://localhost/sxgt http://localhost/sxgt/sxgt.xsd 
+    		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd 
+    		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+    <!-- jmx bean and registration -->
+
+    <bean id="jmxSandboxService" class="de.objectcode.sxgt.example.jmx.JMXSandboxService" />
+
+    <gd:jmx-bean-exporter>
+        <ref bean="jmxSandboxService"/>
+    </gd:jmx-bean-exporter>
+    
+</beans>
