@@ -8,7 +8,7 @@ system based on spring extensible xml and groovy simple templates.
 It is best used for cleaning up legacy spring applications.
 
 LICENSE
--------
+------- 
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License version 3,
