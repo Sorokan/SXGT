@@ -6,7 +6,7 @@
 	<groupId>de.objectcode</groupId>
 	<artifactId>sxgt-core</artifactId>
 	<name>sxgt-core</name>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<description>spring xml groovy templates</description>
 
